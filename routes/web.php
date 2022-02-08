@@ -28,3 +28,4 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 
 Route::get('chat/messages', [MessageController::class, 'index'])->name('messages');
+Route::post('chat/messages', [MessageController::class, 'store'])->name('message.store');

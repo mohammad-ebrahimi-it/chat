@@ -25,11 +25,13 @@ export default {
 
     data() {
         return {
-            body: null
+            body: null,
+            bodyBackUp: null
         }
     },
     methods: {
         handleMessageInput(e) {
+            this.bodyBackUp = this.body
             if (e.keyCode === 13 && !e.shiftKey) {
                 this.send()
                 e.preventDefault();
@@ -52,7 +54,17 @@ export default {
                 return
             }
             let tempMessage = this.buildTempMessage();
-            Bus.$emit('message.added', tempMessage)
+            Bus.$emit('message.added', tempMessage);
+
+            axios.post('/chat/messages', {
+                body: this.body.trim()
+            }).catch((error) => {
+                this.body = this.bodyBackUp
+                Bus.$emit('message.removed', tempMessage)
+                console.log(error)
+            })
+
+            this.body = null
         }
     }
 }

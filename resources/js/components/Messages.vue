@@ -13,15 +13,25 @@ export default {
             messages: []
         }
     },
+    methods:{
+        removeMessage(id){
+            this.messages = this.messages.filter((message) => {
+                    return message.id !== id
+            })
+        }
+    },
     mounted() {
         axios.get('chat/messages').then((response) => {
-            this.messages = response.data[0]
+            this.messages = response.data
         })
 
         Bus.$on('message.added', (message) => {
             this.messages.unshift(message)
             if(message.selfOwned)
                 this.$refs.message.scrollTop = 0
+        })
+        .$on('message.removed', (message) => {
+            this.removeMessage(message.id)
         })
     }
 }
